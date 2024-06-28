@@ -89,6 +89,10 @@ class ABTEModel ():
 
     def load_model(self, model, path):
         model.load_state_dict(torch.load(path), strict=False)
+
+    def load_model(self, model, path, device):
+        model.load_state_dict(torch.load(path), strict=False)
+        model.to(device)
         
     def save_model(self, model, name):
         torch.save(model.state_dict(), name)             
@@ -165,7 +169,7 @@ class ABTEModel ():
          # load model if exists
         if load_model is not None:
             if os.path.exists(load_model):
-                self.load_model(self.model, load_model)
+                self.load_model(self.model, load_model,device)
             else:
                 raise Exception('Model not found')
         else:
@@ -186,13 +190,13 @@ class ABTEModel ():
     
     def predict_batch(self, data, load_model=None, device='cpu'):
 
-        tags_real = [t.strip('][').split(', ') for t in data['Tags']]
+        tags_real = data['bio_tags']
         tags_real = [[int(i) for i in t] for t in tags_real]
 
         # load model if exists
         if load_model is not None:
             if os.path.exists(load_model):
-                self.load_model(self.model, load_model)
+                self.load_model(self.model, load_model,device)
             else:
                 raise Exception('Model not found')
         else:
@@ -202,8 +206,7 @@ class ABTEModel ():
         predictions = []
 
         for i in tqdm(range(len(data))):
-            sentence = data['Tokens'][i]
-            sentence = sentence.replace("'", "").strip("][").split(', ')
+            sentence = data['tokens'][i]
             sentence = ' '.join(sentence)
             w, p, _ = self.predict(sentence, load_model=load_model, device=device)
             predictions.append(p)
@@ -219,7 +222,7 @@ class ABTEModel ():
         # load model if exists
         if load_model is not None:
             if os.path.exists(load_model):
-                self.load_model(self.model, load_model)
+                self.load_model(self.model, load_model, device)
             else:
                 raise Exception('Model not found')
         else:

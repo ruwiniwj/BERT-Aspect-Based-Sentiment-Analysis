@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+from ast import literal_eval
 
 def tag_to_word(sentence, predictions):
     """
@@ -84,3 +85,15 @@ def print_aligned(report1, report2, title1, title2):
     report2 = report2.split('\n')
     for r1, r2 in zip(report1, report2):
         print(r1, '\t\t', r2)
+
+def replace_tags (tags):
+    return [1 if tag.startswith('B-') else 2 if tag.startswith('I-') else 0 if tag == 'O' else tag for tag in tags]
+
+def replace_SEP (tags):
+    return ['O' if tag == '[SEP]' else tag for tag in tags]
+
+def replace_sentiment_tags (tags):
+    return [-1 if tag == 'O' else 2 if tag.endswith('P') else 0 if tag.endswith('N') else 1 if tag.endswith('O') else tag for tag in tags]
+
+def convert_to_array (row) : 
+    return literal_eval(row)
