@@ -16,11 +16,10 @@ class ABSADataset(Dataset):
         self.tokenizer = tokenizer
 
     def __getitem__(self, idx):
-        tokens, tags, pols = self.df.iloc[idx, :3].values
 
-        tokens = tokens.replace("'", "").strip("][").split(', ')
-        tags = tags.strip('][').split(', ')
-        pols = pols.strip('][').split(', ')
+        tokens = self.df.iloc[idx]['tokens']
+        tags = self.df.iloc[idx]['bio_tags']
+        pols = self.df.iloc[idx]['sentiment_tags']
 
         bert_tokens = []
         bert_att = []
