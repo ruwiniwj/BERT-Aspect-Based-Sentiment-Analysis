@@ -86,6 +86,9 @@ def print_aligned(report1, report2, title1, title2):
     for r1, r2 in zip(report1, report2):
         print(r1, '\t\t', r2)
 
+# - **Tags**: list of tags associated to each token: '0' for non-aspect terms, '1' for beginning of terms and '2' for marks of terms;
+# - **Polarities**: list of polarities associated to each token: '0' for negative, '1' for neutral and '2' for positive and '-1' for non-aspect terms;
+  
 def replace_tags (tags):
     return [1 if tag.startswith('B-') else 2 if tag.startswith('I-') else 0 if tag == 'O' else tag for tag in tags]
 
@@ -93,7 +96,7 @@ def replace_SEP (tags):
     return ['O' if tag == '[SEP]' else tag for tag in tags]
 
 def replace_sentiment_tags (tags):
-    return [-1 if tag == 'O' else 2 if tag.endswith('P') else 0 if tag.endswith('N') else 1 if tag.endswith('O') else tag for tag in tags]
+    return [-1 if tag == 'O' else 2 if tag.endswith('positive') else 0 if tag.endswith('negative') else 1 if tag.endswith('neutral') else tag for tag in tags]
 
 def convert_to_array (row) : 
     return literal_eval(row)

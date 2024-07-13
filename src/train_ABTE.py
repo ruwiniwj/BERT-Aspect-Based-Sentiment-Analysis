@@ -22,7 +22,7 @@ parser.add_argument('--adapter', type=bool, default=False, help='adapter')
 def main (batch, epochs, lr, lr_schedule, adapter):
 
     #load
-    data = pd.read_csv('../dataset/absa_train_df_20240625.csv')
+    data = pd.read_csv('../dataset/df_label_539980_train_20240705.csv')
 
     data['bio_tags'] = data['bio_tags'].apply(utils.convert_to_array)
     data['sentiment_tags'] = data['sentiment_tags'].apply(utils.convert_to_array)

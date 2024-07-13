@@ -44,10 +44,11 @@ class ABTEBert(torch.nn.Module):
     def __init__(self, pretrain_model, adapter=True):
         super(ABTEBert, self).__init__()
         self.adapter = adapter
-        if adapter:
-            from transformers.adapters import BertAdapterModel
-            self.bert = BertAdapterModel.from_pretrained(pretrain_model)
-        else: self.bert = BertModel.from_pretrained(pretrain_model)
+        # if adapter:
+        #     from transformers.adapters import BertAdapterModel
+        #     self.bert = BertAdapterModel.from_pretrained(pretrain_model)
+        # else:
+        self.bert = BertModel.from_pretrained(pretrain_model)
         self.linear = torch.nn.Linear(self.bert.config.hidden_size, 3)
         self.loss_fn = torch.nn.CrossEntropyLoss()
 
@@ -251,7 +252,7 @@ class ABTEModel ():
                 trueth += list([int(j) for i in tags_tensors for j in i ])
         
         acc = self._accuracy(pred, trueth)
-        class_report = classification_report(trueth, pred, target_names=['none', 'start of AT', 'mark of AT'])
+        class_report = classification_report(trueth, pred,labels=['0','1', '2'], target_names=['none', 'start of AT', 'mark of AT'])
         return acc, class_report
 
     def accuracy(self, data, load_model=None, device='cpu'):

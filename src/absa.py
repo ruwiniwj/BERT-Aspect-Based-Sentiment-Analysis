@@ -50,10 +50,11 @@ class ABSABert(torch.nn.Module):
     def __init__(self, pretrain_model, adapter=True):
         super(ABSABert, self).__init__()
         self.adapter = adapter
-        if adapter:
-            from transformers.adapters import BertAdapterModel
-            self.bert = BertAdapterModel.from_pretrained(pretrain_model)
-        else: self.bert = BertModel.from_pretrained(pretrain_model)
+        # if adapter:
+        #     from transformers.adapters import BertAdapterModel
+        #     self.bert = BertAdapterModel.from_pretrained(pretrain_model)
+        # else: 
+        self.bert = BertModel.from_pretrained(pretrain_model)
         self.linear = torch.nn.Linear(self.bert.config.hidden_size, 3)
         self.loss_fn = torch.nn.CrossEntropyLoss()
 
@@ -221,11 +222,15 @@ class ABSAModel ():
         return acc/len(x)
 
     def predict_batch(self, data, load_model=None, device='cpu'):
+
+        tags_real = data['bio_tags']
+        tags_real = [[int(i) for i in t] for t in tags_real]
         
-        tags_real = [t.strip('][').split(', ') for t in data['Tags']]
-        tags_real = [[int(i) for i in t ] for t in tags_real]
+        # tags_real = [t.strip('][').split(', ') for t in data['Tags']]
+        # tags_real = [[int(i) for i in t ] for t in tags_real]
         
-        polarity_real = [t.strip('][').split(', ') for t in data['Polarities']]
+        polarity_real = data['sentiment_tags']
+        # polarity_real = [t.strip('][').split(', ') for t in data['Polarities']]
         # if -1 is not an aspect term, if 0 negative, if 2 positive, if 1 neutral, shift of 1
         polarity_real = [[int(i)-1 if int(i)>-1 else None for i in t ] for t in polarity_real]
 
@@ -242,8 +247,8 @@ class ABSAModel ():
         predictions = []
 
         for i in tqdm(range(len(data))):
-            sentence = data['Tokens'][i]
-            sentenceList = sentence.replace("'", "").strip("][").split(', ')
+            sentenceList = data['tokens'][i]
+            # sentenceList = sentence.replace("'", "").strip("][").split(', ')
             sentence = ' '.join(sentenceList)
             prediction = []
             for j in range(len(sentenceList)):
